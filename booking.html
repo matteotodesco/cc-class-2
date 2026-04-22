@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solv Test Booking Tool</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen py-10 px-4">
+  <div class="max-w-2xl mx-auto">
+
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">Solv Test Booking Tool</h1>
+      <p class="text-sm text-gray-500 mt-1">Location: Clearcare Boston — 150 Huntington Ave, MA (<code>gLXje2</code>)</p>
+    </div>
+
+    <!-- Patient Selector -->
+    <div class="bg-white border border-gray-200 rounded-xl p-6 mb-6 shadow-sm">
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Load Test Patient</label>
+      <select id="patientSelect" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="">— Select a test patient —</option>
+      </select>
+    </div>
+
+    <form id="bookingForm" class="space-y-6">
+
+      <!-- Patient Info -->
+      <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Patient Demographics</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">First Name <span class="text-red-500">*</span></label>
+            <input id="first_name" type="text" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Last Name <span class="text-red-500">*</span></label>
+            <input id="last_name" type="text" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Date of Birth <span class="text-red-500">*</span></label>
+            <input id="birth_date" type="date" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Sex at Birth</label>
+            <select id="birth_sex" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">— Not specified —</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Phone <span class="text-red-500">*</span></label>
+            <input id="phone" type="tel" required placeholder="+16175550100" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Email</label>
+            <input id="email" type="email" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Insurance / Paperwork Reference -->
+      <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Insurance Reference</h2>
+          <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">Paperwork — not sent to booking API</span>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-gray-600 mb-1">Insurance Plan</label>
+            <input id="insurance_plan" type="text" class="w-full border border-gray-200 bg-gray-50 rounded-lg px-3 py-2 text-sm text-gray-500" readonly />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Member ID</label>
+            <input id="member_id" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Group Number</label>
+            <input id="group_number" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointment Details -->
+      <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Appointment</h2>
+        <div class="space-y-4">
+          <div>
+            <div id="slotPickerRow">
+            <label class="block text-xs font-medium text-gray-600 mb-1">
+              Appointment Slot
+              <span id="slotsStatus" class="ml-2 text-gray-400 font-normal"></span>
+            </label>
+            <select id="appointment_date_select" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">Loading available slots…</option>
+            </select>
+          </div>
+          <div id="customDateRow" class="hidden">
+            <label class="block text-xs font-medium text-gray-600 mb-1">Appointment Date/Time <span class="text-red-500">*</span></label>
+            <input id="appointment_date_custom" type="datetime-local" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Reason for Visit</label>
+            <input id="reason" type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div class="flex items-center gap-3">
+            <input id="is_walk_in" type="checkbox" class="rounded border-gray-300" />
+            <label for="is_walk_in" class="text-xs font-medium text-gray-600">Walk-in (status set to CONFIRMED instead of RESERVED)</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Address (Optional) -->
+      <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-4">Address <span class="text-gray-400 font-normal normal-case text-xs">(optional)</span></h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2">
+            <input id="address_street" type="text" placeholder="Street" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <input id="address_city" type="text" placeholder="City" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input id="address_state" type="text" placeholder="State" maxlength="2" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input id="address_zip" type="text" placeholder="ZIP" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors text-sm">
+        Create Booking
+      </button>
+    </form>
+
+    <!-- Response -->
+    <div id="responseArea" class="mt-6 hidden">
+      <div id="responseBox" class="rounded-xl border p-5">
+        <div class="flex items-center justify-between mb-2">
+          <span id="responseLabel" class="text-sm font-semibold"></span>
+          <span id="responseStatus" class="text-xs px-2 py-0.5 rounded-full font-medium"></span>
+        </div>
+        <pre id="responseBody" class="text-xs text-gray-700 overflow-x-auto whitespace-pre-wrap bg-gray-50 rounded-lg p-3 mt-2"></pre>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const TEST_PATIENTS = [
+      { first_name: "James",    last_name: "Miller",    date_of_birth: "1985-03-12", phone: "6175550142", email: "james.miller@email.com",    insurance_plan: "Aetna PPO",                       member_id: "AET928374651", group_number: "GRP10042", reason: "Sore throat and fever",  slot_time: "2026-04-23T09:20:00-04:00", appointment_type: "urgent_care"   },
+      { first_name: "Sarah",    last_name: "Chen",      date_of_birth: "1992-07-28", phone: "6175550187", email: "sarah.chen@email.com",        insurance_plan: "BlueCross BlueShield",             member_id: "BCBS44712983", group_number: "GRP20187", reason: "Annual wellness exam",   slot_time: "2026-04-23T10:00:00-04:00", appointment_type: "annual_physical"},
+      { first_name: "Robert",   last_name: "Johnson",   date_of_birth: "1978-11-05", phone: "6175550234", email: "robert.johnson@email.com",    insurance_plan: "Cigna Open Access",               member_id: "CIG773829401", group_number: "GRP30294", reason: "Knee pain follow-up",   slot_time: "2026-04-23T10:40:00-04:00", appointment_type: "follow_up"     },
+      { first_name: "Maria",    last_name: "Garcia",    date_of_birth: "2001-04-17", phone: "6175550361", email: "maria.garcia@email.com",      insurance_plan: "UnitedHealthcare Select",          member_id: "UHC192837465", group_number: "GRP40511", reason: "Ear infection",         slot_time: "2026-04-23T11:20:00-04:00", appointment_type: "sick_visit"    },
+      { first_name: "Priya",    last_name: "Patel",     date_of_birth: "1995-12-03", phone: "6175550963", email: "priya.patel@email.com",       insurance_plan: "UnitedHealthcare Select",          member_id: "UHC304958172", group_number: "GRP40511", reason: "Flu symptoms",          slot_time: "2026-04-23T15:20:00-04:00", appointment_type: "sick_visit"    },
+      { first_name: "David",    last_name: "Williams",  date_of_birth: "1967-09-30", phone: "6175550419", email: "david.williams@email.com",    insurance_plan: "Humana Choice (expired 03/2026)", member_id: "HUM384726150", group_number: "GRP50673", reason: "Back pain",             slot_time: "2026-04-23T12:00:00-04:00", appointment_type: "urgent_care"   },
+      { first_name: "Jennifer", last_name: "Brown",     date_of_birth: "1990-02-14", phone: "6175550523", email: "jennifer.brown@email.com",    insurance_plan: "Aetna PPO",                       member_id: "A7",           group_number: "GRP10042", reason: "Rash on arm",           slot_time: "2026-04-23T12:40:00-04:00", appointment_type: "sick_visit"    },
+      { first_name: "René",     last_name: "O'Brien",   date_of_birth: "1983-06-22", phone: "6175550678", email: "rene.obrien@email.com",       insurance_plan: "Cigna Open Access",               member_id: "CIG884710293", group_number: "GRP30294", reason: "Migraine",              slot_time: "2026-04-23T14:00:00-04:00", appointment_type: "urgent_care"   },
+      { first_name: "Emily",    last_name: "Davis",     date_of_birth: "2041-13-99", phone: "6175550741", email: "emily.davis@email.com",       insurance_plan: "BlueCross BlueShield",             member_id: "BCBS55831094", group_number: "GRP20187", reason: "Stomach pain",          slot_time: "2026-04-23T14:40:00-04:00", appointment_type: "urgent_care"   },
+      { first_name: "Michael",  last_name: "Thompson",  date_of_birth: "1975-08-09", phone: "6175550852", email: "michael.thompson@email.com",  insurance_plan: "Aetna PPO",                       member_id: "AET647382910", group_number: "GRP10042", reason: "Routine checkup",       slot_time: "2026-04-23T13:00:00-04:00", appointment_type: "annual_physical"},
+    ];
+
+    const patientSelect = document.getElementById('patientSelect');
+    const slotSelect = document.getElementById('appointment_date_select');
+    const slotsStatus = document.getElementById('slotsStatus');
+    const customDateRow = document.getElementById('customDateRow');
+
+    // Populate patient dropdown
+    TEST_PATIENTS.forEach((p, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `${p.first_name} ${p.last_name} — ${p.reason}`;
+      patientSelect.appendChild(opt);
+    });
+
+    // Auto-fill form on patient select
+    patientSelect.addEventListener('change', () => {
+      if (patientSelect.value === '') return;
+      const p = TEST_PATIENTS[parseInt(patientSelect.value)];
+      document.getElementById('first_name').value = p.first_name;
+      document.getElementById('last_name').value = p.last_name;
+      document.getElementById('birth_date').value = p.date_of_birth;
+      document.getElementById('phone').value = formatPhone(p.phone);
+      document.getElementById('email').value = p.email;
+      document.getElementById('insurance_plan').value = p.insurance_plan;
+      document.getElementById('member_id').value = p.member_id;
+      document.getElementById('group_number').value = p.group_number;
+      document.getElementById('reason').value = p.reason;
+
+      // Pre-select the CSV slot time if it exists in the dropdown, else fall back to custom input
+      const csvTime = p.slot_time;
+      let matched = false;
+      for (const opt of slotSelect.options) {
+        if (opt.value === csvTime) {
+          slotSelect.value = csvTime;
+          matched = true;
+          break;
+        }
+      }
+      if (!matched && csvTime) {
+        showCustomDate(csvTime);
+      }
+    });
+
+    function formatPhone(raw) {
+      const digits = raw.replace(/\D/g, '');
+      return digits.length === 10 ? `+1${digits}` : `+${digits}`;
+    }
+
+    function showCustomDate(isoString) {
+      customDateRow.classList.remove('hidden');
+      slotSelect.value = '__custom__';
+      if (isoString) {
+        // Convert ISO string to datetime-local format (YYYY-MM-DDTHH:MM)
+        const d = new Date(isoString);
+        const pad = n => String(n).padStart(2, '0');
+        const local = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        document.getElementById('appointment_date_custom').value = local;
+      }
+    }
+
+    slotSelect.addEventListener('change', () => {
+      if (slotSelect.value === '__custom__') {
+        customDateRow.classList.remove('hidden');
+      } else {
+        customDateRow.classList.add('hidden');
+      }
+    });
+
+    // Load available slots
+    async function loadSlots() {
+      slotsStatus.textContent = 'Loading…';
+      try {
+        const res = await fetch('/api/slots');
+        const data = await res.json();
+
+        // Flatten slots from all location objects in the response
+        let allSlots = [];
+        if (Array.isArray(data)) {
+          data.forEach(loc => {
+            if (Array.isArray(loc.slots)) allSlots = allSlots.concat(loc.slots);
+          });
+        } else if (Array.isArray(data.slots)) {
+          allSlots = data.slots;
+        }
+
+        const available = allSlots
+          .filter(s => !s.busy && s.appointment_date)
+          .sort((a, b) => new Date(a.appointment_date) - new Date(b.appointment_date));
+
+        slotSelect.innerHTML = '';
+
+        if (available.length === 0) {
+          document.getElementById('slotPickerRow').classList.add('hidden');
+          slotSelect.value = '__custom__';
+          customDateRow.classList.remove('hidden');
+        } else {
+          slotsStatus.textContent = `${available.length} slot${available.length !== 1 ? 's' : ''} available`;
+          const placeholder = document.createElement('option');
+          placeholder.value = '';
+          placeholder.textContent = '— Pick a slot —';
+          slotSelect.appendChild(placeholder);
+
+          available.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.appointment_date;
+            const d = new Date(s.appointment_date);
+            opt.textContent = d.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+            slotSelect.appendChild(opt);
+          });
+
+          const customOpt = document.createElement('option');
+          customOpt.value = '__custom__';
+          customOpt.textContent = '— Enter custom date/time —';
+          slotSelect.appendChild(customOpt);
+        }
+      } catch (err) {
+        document.getElementById('slotPickerRow').classList.add('hidden');
+        slotSelect.value = '__custom__';
+        customDateRow.classList.remove('hidden');
+      }
+    }
+
+    loadSlots();
+
+    // Form submission
+    document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const appointmentDate =
+        slotSelect.value && slotSelect.value !== '__custom__'
+          ? slotSelect.value
+          : new Date(document.getElementById('appointment_date_custom').value).toISOString();
+
+      if (!appointmentDate) {
+        alert('Please select or enter an appointment date.');
+        return;
+      }
+
+      const payload = {
+        first_name: document.getElementById('first_name').value.trim(),
+        last_name: document.getElementById('last_name').value.trim(),
+        birth_date: document.getElementById('birth_date').value,
+        phone: document.getElementById('phone').value.trim(),
+        email: document.getElementById('email').value.trim() || undefined,
+        birth_sex: document.getElementById('birth_sex').value || undefined,
+        appointment_date: appointmentDate,
+        reason: document.getElementById('reason').value.trim() || undefined,
+        is_walk_in: document.getElementById('is_walk_in').checked,
+        address_street: document.getElementById('address_street').value.trim() || undefined,
+        address_city: document.getElementById('address_city').value.trim() || undefined,
+        address_state: document.getElementById('address_state').value.trim() || undefined,
+        address_zip: document.getElementById('address_zip').value.trim() || undefined,
+        // Paperwork reference fields (stripped server-side, not sent to Solv)
+        insurance_plan: document.getElementById('insurance_plan').value,
+        member_id: document.getElementById('member_id').value.trim(),
+        group_number: document.getElementById('group_number').value.trim(),
+      };
+
+      Object.keys(payload).forEach(k => payload[k] === undefined && delete payload[k]);
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Creating booking…';
+
+      try {
+        const res = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        showResponse(res.ok, res.status, data);
+      } catch (err) {
+        showResponse(false, 0, { error: err.message });
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Create Booking';
+      }
+    });
+
+    function showResponse(ok, status, data) {
+      const area = document.getElementById('responseArea');
+      const box = document.getElementById('responseBox');
+      const label = document.getElementById('responseLabel');
+      const statusBadge = document.getElementById('responseStatus');
+      const body = document.getElementById('responseBody');
+
+      area.classList.remove('hidden');
+      box.className = `rounded-xl border p-5 ${ok ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`;
+      label.textContent = ok ? 'Booking created successfully' : 'Booking failed';
+      label.className = `text-sm font-semibold ${ok ? 'text-green-700' : 'text-red-700'}`;
+      statusBadge.textContent = `HTTP ${status}`;
+      statusBadge.className = `text-xs px-2 py-0.5 rounded-full font-medium ${ok ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`;
+      body.textContent = JSON.stringify(data, null, 2);
+      area.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

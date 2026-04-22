@@ -1,0 +1,11 @@
+first_name,last_name,date_of_birth,phone,email,insurance_plan,member_id,group_number,reason,slot_time,appointment_type
+James,Miller,1985-03-12,617-555-0142,james.miller@email.com,Aetna PPO,AET928374651,GRP10042,Sore throat and fever,2026-04-23T09:20:00-04:00,urgent_care
+Sarah,Chen,1992-07-28,617-555-0187,sarah.chen@email.com,BlueCross BlueShield,BCBS44712983,GRP20187,Annual wellness exam,2026-04-23T10:00:00-04:00,annual_physical
+Robert,Johnson,1978-11-05,617-555-0234,robert.johnson@email.com,Cigna Open Access,CIG773829401,GRP30294,Knee pain follow-up,2026-04-23T10:40:00-04:00,follow_up
+Maria,Garcia,2001-04-17,617-555-0361,maria.garcia@email.com,UnitedHealthcare Select,UHC192837465,GRP40511,Ear infection,2026-04-23T11:20:00-04:00,sick_visit
+Priya,Patel,1995-12-03,617-555-0963,priya.patel@email.com,UnitedHealthcare Select,UHC304958172,GRP40511,Flu symptoms,2026-04-23T15:20:00-04:00,sick_visit
+David,Williams,1967-09-30,617-555-0419,david.williams@email.com,Humana Choice (expired 03/2026),HUM384726150,GRP50673,Back pain,2026-04-23T12:00:00-04:00,urgent_care
+Jennifer,Brown,1990-02-14,617-555-0523,jennifer.brown@email.com,Aetna PPO,A7,GRP10042,Rash on arm,2026-04-23T12:40:00-04:00,sick_visit
+René,O'Brien,1983-06-22,617-555-0678,rene.obrien@email.com,Cigna Open Access,CIG884710293,GRP30294,Migraine,2026-04-23T14:00:00-04:00,urgent_care
+Emily,Davis,2041-13-99,617-555-0741,emily.davis@email.com,BlueCross BlueShield,BCBS55831094,GRP20187,Stomach pain,2026-04-23T14:40:00-04:00,urgent_care
+Michael,Thompson,1975-08-09,617-555-0852,michael.thompson@email.com,Aetna PPO,AET647382910,GRP10042,Routine checkup,2026-04-23T13:00:00-04:00,annual_physical
